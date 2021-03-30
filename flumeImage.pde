@@ -1,28 +1,60 @@
+float limitPx = 1;
+String imgName = "pattern1.jpg";
+PImage photo;
+
 void setup(){
   size(512, 512);
-  background(0);
+  photo = loadImage(imgName);
+  System.out.println("Start");
+  drawInitialSection(0, height, width/2);
 }
 
-void draw(){
-  int iterations = int(log(width)/log(2));
+void draw(){ 
+}
 
-  for(int i = 0; i < 2; i++){
-    //start on 2 -> 256 squares top 255 bottom = 511
-    //start on 4 -> 128 squares top 127 bottom = 255
-    
-    int squares = width / (i+1); //number of squares per iteration +1
-    float factor = pow(2, i+1); //size of square
-    
-    //draw horizontal iteration
-    for(int h = 0; h <squares / 2; h++){
-      rect(factor*h, 0, factor, factor);
-    }
-    
-    //draw vertical iteration
-    for(int h = 0; h <squares / 2; h++){
-      rect(width-factor, factor*h, factor, factor);
-    }
-  }
+void drawInitialSection(float startX, float startY, float startDim){
+  //recursion break
+  if(startDim < limitPx) return;
   
+  //draw base rect
+  drawImage(startX, startY - startDim, startDim);
   
+  //vertical sections
+  drawVerticalSection(startX, startY - startDim, startDim/2);
+  drawVerticalSection(startX + startDim/2, startY - startDim, startDim/2);
+  
+  //horizontal sections
+  drawHorizontalSection(startX + startDim, startY - startDim, startDim/2);
+  drawHorizontalSection(startX + startDim, startY - startDim/2, startDim/2);
+  
+  //initial sections
+  drawInitialSection(startX + startDim, startY - startDim, startDim/2);
+}
+
+void drawVerticalSection(float startX, float startY, float startDim){
+  //recursion break
+  if(startDim < limitPx) return;
+  
+   System.out.println("Image at x: " + startX + " y: " + (startY - startDim) + " size: " + startDim);
+  drawImage(startX, startY - startDim, startDim);
+  
+  drawVerticalSection(startX, startY - startDim, startDim/2);
+  drawVerticalSection(startX + startDim/2, startY - startDim, startDim/2);
+}
+
+void drawHorizontalSection(float startX, float startY, float startDim){
+  //recursion break
+  if(startDim < limitPx) return;
+  
+  drawImage(startX, startY, startDim);
+  
+  drawHorizontalSection(startX + startDim, startY, startDim/2);
+  drawHorizontalSection(startX + startDim, startY + startDim/2, startDim/2);
+}
+
+void drawImage(float x, float y, float dim){
+  photo = loadImage(imgName);
+
+  photo.resize(int(dim), int(dim));
+  image(photo, x, y);
 }
